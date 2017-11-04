@@ -4,13 +4,6 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class groceryBagger {
-
-	//private static ArrayList<String> groceries = new ArrayList<String>();
-	//private static File groceryProblem;
-	//private static int maxBags;
-	//private static int bagSize;
-	//private static Scanner scan;
-	//private static Scanner tempScan = new Scanner(System.in);
 	
 	public static void main(String[] args) {
 		
@@ -52,6 +45,7 @@ public class groceryBagger {
 			maxBags = Integer.parseInt(scan.nextLine());
 			bagSize = Integer.parseInt(scan.nextLine());
 			System.out.println("Max bags: " + maxBags + "\nMax Capacity per Bag: " + bagSize);
+			int id = 1;
 			while(scan.hasNextLine()) {
 				ArrayList<String> constraints = new ArrayList<>();
 				String line = scan.nextLine();
@@ -69,7 +63,7 @@ public class groceryBagger {
 						constraints.add(lineScan.next());
 					}
 				}
-				groceries.add(new GroceryItem(itemName, plusConstraint, weight, constraints));
+				groceries.add(new GroceryItem(itemName, plusConstraint, weight, constraints, id++));
 
 				lineScan.close();
 			}
