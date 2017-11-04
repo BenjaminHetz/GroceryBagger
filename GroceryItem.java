@@ -79,7 +79,7 @@ public class GroceryItem {
     
     public void setConstraintBits(int totalItems) {
     	constraintBits = new BitSet(totalItems);
-    	//TODO figure out how to set the constraints.
+    	//TODO Figure out how to connect constraints to items and set BitSet
     }
     
     public String toString(){

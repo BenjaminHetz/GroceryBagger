@@ -26,11 +26,23 @@ public class GroceryBag {
     }
     
 
-    public String addItem(GroceryItem item) {
+    /**
+     * Try to add the passed in item to this bag.
+     * 
+     * @param item The item to add to the bag.
+     * @return True if added successfully, false otherwise.
+     */
+    public boolean addItem(GroceryItem item) {
     	int id = item.getID();
-    	String result = "";
-    	if(constraintBits.get(id)) {
-    		result = "Invalid";
+    	boolean result;
+    	if(item.getWeight() + currWeight > maxWeight) {
+    		result = false;
+    	} else if(!constraintBits.get(id)) {
+    		result = false;
+    	} else {
+    		currWeight += item.getWeight();
+    		constraintBits.and(item.getConstraintBits());
+    		result = true;
     	}
     	return result;
     }
