@@ -16,7 +16,7 @@ public class GroceryItem {
 
     /**
      * @param name The name of this item
-     * @param plusConstraint Items this one can be bagged with.
+     * @param plusConstraint Whether the constraint is "only bag with" or "don't bag with"
      * @param weight The weight of the item.
      * @param constraints Items this one can't be bagged with.
      * @param id Identifier for which item this is.
@@ -62,7 +62,7 @@ public class GroceryItem {
     /**
      * Getter for the item's constraint type.
      * 
-     * @return True if can be bagged with, false if can't be bagged with.
+     * @return True if the constraint is only bag with, false if constraint is do not bag with.
      */
     public boolean getPlusContraint() {
     	return this.plusConstraint;
@@ -77,9 +77,24 @@ public class GroceryItem {
     	return this.weight;
     }
     
-    public void setConstraintBits(int totalItems) {
-    	constraintBits = new BitSet(totalItems);
+    public void setConstraintBits(int totalItems, ArrayList<GroceryItem> groceries) {
+    	this.constraintBits = new BitSet(totalItems);
     	//TODO Figure out how to connect constraints to items and set BitSet
+        //Iterate over items to be bagged
+        //If they appear in the constraints for the current item, set the proper bit
+        for (GroceryItem GI: groceries){
+            if (this.constraints.contains(GI.getItemName())){
+                this.constraintBits.set(GI.getID());
+            }
+        }
+        //If the constraint is of type "can't be bagged"
+        //then the items can be bagged with everything else,
+        //so we flip the whole bitset
+        if (this.plusConstraint == false){
+            this.constraintBits.flip(0, this.constraintBits.size() - 1);
+        }
+        //Every item can be bagged with itself so it must be set
+        this.constraintBits.set(this.id);
     }
     
     public String toString(){

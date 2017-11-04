@@ -45,7 +45,7 @@ public class groceryBagger {
 			maxBags = Integer.parseInt(scan.nextLine());
 			bagSize = Integer.parseInt(scan.nextLine());
 			System.out.println("Max bags: " + maxBags + "\nMax Capacity per Bag: " + bagSize);
-			int totalItems = 1;
+			int idCounter = 0;
 			while(scan.hasNextLine()) {
 				ArrayList<String> constraints = new ArrayList<>();
 				String line = scan.nextLine();
@@ -63,14 +63,14 @@ public class groceryBagger {
 						constraints.add(lineScan.next());
 					}
 				}
-				groceries.add(new GroceryItem(itemName, plusConstraint, weight, constraints, totalItems++));
+				groceries.add(new GroceryItem(itemName, plusConstraint, weight, constraints, idCounter++));
 
 				lineScan.close();
 			}
 			scan.close();
 
 			for(GroceryItem item: groceries) {
-				item.setConstraintBits(totalItems - 1);
+				item.setConstraintBits(idCounter, groceries);
 			}
 			
 			
