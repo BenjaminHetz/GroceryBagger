@@ -5,12 +5,12 @@ import java.util.Scanner;
 
 public class groceryBagger {
 
-	private static ArrayList<String> groceries = new ArrayList<String>();
-	private static File groceryProblem;
-	private static int maxBags;
-	private static int bagSize;
-	private static Scanner scan;
-	private static Scanner tempScan = new Scanner(System.in);
+	//private static ArrayList<String> groceries = new ArrayList<String>();
+	//private static File groceryProblem;
+	//private static int maxBags;
+	//private static int bagSize;
+	//private static Scanner scan;
+	//private static Scanner tempScan = new Scanner(System.in);
 	private static String tempInput;
 	
 	public static void main(String[] args) {
@@ -32,21 +32,43 @@ public class groceryBagger {
 		}
 		
 		//Parse file and get grocery info.
-		groceryProblem = new File(args[0]);
+		File groceryProblem = new File(args[0]);
 		try {
+			int maxBags;
+			int bagSize;
+			ArrayList<GroceryItem> groceries = new ArrayList<>();
 			//Initialize Scanner.
-			scan = new Scanner(groceryProblem);
+			Scanner scan = new Scanner(groceryProblem);
 			
 			//Get data from scanner and close it.
-			//maxBags = Integer.parseInt(scan.nextLine());
-			//bagSize = Integer.parseInt(scan.nextLine());
-			while(scan.hasNext()) {
-				groceries.add(scan.nextLine());
+			maxBags = Integer.parseInt(scan.nextLine());
+			bagSize = Integer.parseInt(scan.nextLine());
+			System.out.println("Max bags: " + maxBags + "\nMax Capacity per Bag: " + bagSize);
+			while(scan.hasNextLine()) {
+				ArrayList<String> constraints = new ArrayList<>();
+				String line = scan.nextLine();
+				Scanner lineScan = new Scanner(line);
+
+				String itemName = lineScan.next();
+
+				int weight = lineScan.nextInt();
+				boolean plusConstraint = false;
+				if (lineScan.hasNext()){
+					if (lineScan.next().equals("+")) {
+						plusConstraint = true;
+					}
+					while (lineScan.hasNext()){
+						constraints.add(lineScan.next());
+					}
+				}
+				groceries.add(new GroceryItem(itemName, plusConstraint, weight, constraints));
+
+				lineScan.close();
 			}
 			scan.close();
 			
 			//Print data to verify how it is given.
-			for(String thing : groceries){
+			for(GroceryItem thing : groceries){
 				System.out.println(thing);
 			}
 			
@@ -71,7 +93,7 @@ public class groceryBagger {
 	 * @return true if the user enters y/yes, false if invalid input, and close if users enters n/no
 	 */
 	private static boolean checkInput() {
-		
+		Scanner tempScan = new Scanner(System.in);
 		tempInput = tempScan.next();
 		
 		if(tempInput.toLowerCase().equals("y") | tempInput.toLowerCase().equals("yes")) {
