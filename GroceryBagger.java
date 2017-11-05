@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
 
 public class GroceryBagger {
@@ -92,7 +93,13 @@ public class GroceryBagger {
 				System.out.println(bag.toString());
 			}
 			
-			
+			ArrayList<GroceryItem> currList = MRV(groceries, bags, maxBags);
+			GroceryItem currItem;
+			if(currList.size() == 1) {
+				currItem = currList.get(0);
+			} else {
+				currItem = LCV(currList);
+			}
 			
 			
 			
@@ -109,21 +116,58 @@ public class GroceryBagger {
 
 	}
 
-	
-	/*Can't remember which is first. The first one needs to return a 
-	 * string of items to use (those with the same value), and the 
-	 * other should return an int representing which item to use.
-	 * If the second has more than one potential item, it chooses 
-	 * one at random if I remember correctly. Maybe use an in array.
-	*/
-	private String MRV() {
-		
-		return "";
+	//Minimum Remaining Values...Minimum bags available.
+	private static ArrayList<GroceryItem> MRV(ArrayList<GroceryItem> groceries, ArrayList<GroceryBag> bags, int maxBags) {
+		int minValue = 10000;
+		ArrayList<GroceryItem> minItems = new ArrayList<>();
+		for(GroceryItem GI: groceries) {
+			int currValue = 0;
+			for(int i = 0; i < maxBags; i++) {
+				if(bags.get(i).empty()) {
+					currValue += maxBags - i;
+				} else {
+					if(bags.get(i).getConstraintBits().get(GI.getID())) {
+						currValue++;
+					}
+				}
+
+			}
+			if(currValue < minValue) {
+				minValue = currValue;
+				minItems.removeAll(minItems);
+				minItems.add(GI);
+			}
+			else if(currValue == minValue) {
+				minItems.add(GI);
+			}
+		}
+		return minItems;
 	}
 	
-	private String LCV() {
-		
-		return "";
+	//Least Constraining Value...most 1s in BitSet
+	private static GroceryItem LCV(ArrayList<GroceryItem> groceries) {
+		//Find LCVs
+		ArrayList<GroceryItem> maxItems = new ArrayList<>();
+		int maxValue = 0;
+		for(GroceryItem GI: groceries) {
+			int curValue = GI.getConstraintBits().cardinality();
+			if(curValue > maxValue) {
+				maxItems.removeAll(maxItems);
+				maxValue = curValue;
+				maxItems.add(GI);
+			}
+			else if(curValue == maxValue) {
+				maxItems.add(GI);
+			}
+		}
+		//Return random LCV
+		if(maxItems.size() == 1) {
+			return maxItems.get(0);
+		} else {
+			Random rand = new Random();
+			int randItem = rand.nextInt(maxItems.size());
+			return maxItems.get(randItem);
+		}
 	}
 
 }

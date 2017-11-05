@@ -63,6 +63,10 @@ public class GroceryBag {
     	return currItems == 0;
     }
     
+    public BitSet getConstraintBits() {
+    	return constraintBits;
+    }
+    
     /**
      * Removes the specified item from the bag if the
      * item is in the bag.
