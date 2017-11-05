@@ -93,6 +93,7 @@ public class GroceryBag {
     	return result;
     }
     
+    //Once testing is done, needs updated to proper format.
     public String toString(){
         String returnString = "Bag " + bagID;
         

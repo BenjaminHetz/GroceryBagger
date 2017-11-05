@@ -94,6 +94,8 @@ public class GroceryBagger {
 			
 			
 			
+			
+			
 		} catch(NumberFormatException e) {
 			System.out.println("The first and second line of the input file must be integers.");
 			System.exit(1);
@@ -107,5 +109,21 @@ public class GroceryBagger {
 
 	}
 
+	
+	/*Can't remember which is first. The first one needs to return a 
+	 * string of items to use (those with the same value), and the 
+	 * other should return an int representing which item to use.
+	 * If the second has more than one potential item, it chooses 
+	 * one at random if I remember correctly. Maybe use an in array.
+	*/
+	private String MRV() {
+		
+		return "";
+	}
+	
+	private String LCV() {
+		
+		return "";
+	}
 
 }
