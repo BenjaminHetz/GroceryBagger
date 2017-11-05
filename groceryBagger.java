@@ -12,7 +12,6 @@ public class groceryBagger {
 			System.out.println("Usage: groceryBagger <fileName>");
 			System.exit(1);
 		}
-		
 		boolean arcConsistency = true;
 		boolean localSearch = false;
 		if(args.length > 1) {
@@ -63,14 +62,19 @@ public class groceryBagger {
 						constraints.add(lineScan.next());
 					}
 				}
+				System.out.println(idCounter);
 				groceries.add(new GroceryItem(itemName, plusConstraint, weight, constraints, idCounter++));
 
 				lineScan.close();
 			}
 			scan.close();
 
-			for(GroceryItem item: groceries) {
-				item.setConstraintBits(idCounter, groceries);
+			for(GroceryItem GI: groceries) {
+				GI.setConstraintBits(idCounter, groceries);
+			}
+			
+			for(GroceryItem GI: groceries) {
+				System.out.println(GI.toString());
 			}
 			
 			

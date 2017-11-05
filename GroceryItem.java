@@ -78,8 +78,13 @@ public class GroceryItem {
     }
     
     public void setConstraintBits(int totalItems, ArrayList<GroceryItem> groceries) {
+    	System.out.println("Setting BitSet. Total items: " + totalItems);
     	this.constraintBits = new BitSet(totalItems);
-    	//TODO Figure out how to connect constraints to items and set BitSet
+    	//If no constraints, flip to all 1s and return.
+    	 if (this.constraints.size() == 0) {
+    		 this.constraintBits.flip(0, totalItems);
+    		 return;
+    	 }
         //Iterate over items to be bagged
         //If they appear in the constraints for the current item, set the proper bit
         for (GroceryItem GI: groceries){
@@ -91,10 +96,11 @@ public class GroceryItem {
         //then the items can be bagged with everything else,
         //so we flip the whole bitset
         if (this.plusConstraint == false){
-            this.constraintBits.flip(0, this.constraintBits.size() - 1);
+            this.constraintBits.flip(0, totalItems);
         }
         //Every item can be bagged with itself so it must be set
         this.constraintBits.set(this.id);
+        System.out.println(constraintBits);
     }
     
     public String toString(){
@@ -113,7 +119,11 @@ public class GroceryItem {
             for (String s : this.constraints) {
                 returnString += "\t" + s + "\n";
             }
+            returnString += "Constraint Bit Set: \n";
+            returnString += this.constraintBits + "\n";
         } else {
+        	returnString += "Constraint Bit Set: \n";
+            returnString += this.constraintBits + "\n";
             returnString += "No Constraints\n";
         }
         return returnString;
