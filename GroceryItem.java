@@ -78,7 +78,6 @@ public class GroceryItem {
     }
     
     public void setConstraintBits(int totalItems, ArrayList<GroceryItem> groceries) {
-    	System.out.println("Setting BitSet. Total items: " + totalItems);
     	this.constraintBits = new BitSet(totalItems);
     	//If no constraints, flip to all 1s and return.
     	 if (this.constraints.size() == 0) {
@@ -100,7 +99,6 @@ public class GroceryItem {
         }
         //Every item can be bagged with itself so it must be set
         this.constraintBits.set(this.id);
-        System.out.println(constraintBits);
     }
     
     public String toString(){

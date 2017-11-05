@@ -74,6 +74,7 @@ public class groceryBagger {
 			}
 			
 			for(GroceryItem GI: groceries) {
+				System.out.println();
 				System.out.println(GI.toString());
 			}
 			
