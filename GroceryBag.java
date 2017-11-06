@@ -65,8 +65,22 @@ public class GroceryBag {
     	return currItems == 0;
     }
     
+    /**
+     * Getter for the constraint BitSet
+     * 
+     * @return The constraint BitSet
+     */
     public BitSet getConstraintBits() {
     	return constraintBits;
+    }
+    
+    /**
+     * Getter for the ArrayList of the bag's current items.
+     * 
+     * @return ArrayList containing the current items in the bag.
+     */
+    public ArrayList<GroceryItem> getItems(){
+    	return items;
     }
     
     /**
