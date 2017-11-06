@@ -42,7 +42,7 @@ public class GroceryBagger {
 			//Get data from scanner and close it.
 			maxBags = Integer.parseInt(scan.nextLine());
 			bagSize = Integer.parseInt(scan.nextLine());
-			System.out.println("Max bags: " + maxBags + "\nMax Capacity per Bag: " + bagSize);
+//			System.out.println("Max bags: " + maxBags + "\nMax Capacity per Bag: " + bagSize);
 			int idCounter = 0;
 			while(scan.hasNextLine()) {
 				ArrayList<String> constraints = new ArrayList<>();
@@ -86,14 +86,18 @@ public class GroceryBagger {
 				bags.add(new GroceryBag(bagSize, idCounter++, totalItems));
 			}
 			
-			// Check bags for proper creation.
-			for(GroceryBag bag: bags) {
-				System.out.println(bag.toString());
+			// Print bags to check proper creation.
+//			for(GroceryBag bag: bags) {
+//				System.out.println(bag.toString());
+//			}
+			
+			String result = depthFirstSearch(groceries, bags, totalItems, maxBags);
+			if(result.equals("Success")){
+				System.out.println(result);
+				for(GroceryBag bag: bags) {
+					System.out.println(bag.toString());
+				}
 			}
-			
-			depthFirstSearch(groceries, bags, totalItems, maxBags);
-			
-			
 		} catch(NumberFormatException e) {
 			System.out.println("The first and second line of the input file must be integers.");
 			System.exit(1);
@@ -104,54 +108,66 @@ public class GroceryBagger {
 			System.out.println("An exception occured that was not accounted for.");
 			e.printStackTrace();
 		}
-
 	}
 
+	/**
+	 * Perform a depth first search to determine how to bag the provided
+	 * groceries with the provided parameters.
+	 * 
+	 * @param groceries An ArrayList of groceries to bag.
+	 * @param bags An ArrayList of bags to put groceries in.
+	 * @param totalItems The total number of items to bag.
+	 * @param maxBags The total number of bags to use.
+	 * @return "Success" if no problems, "Failed" otherwise.
+	 */
 	private static String depthFirstSearch(ArrayList<GroceryItem> groceries, ArrayList<GroceryBag> bags, int totalItems, int maxBags) {
-		
-		//Create Ord ArrayList of items.
-		ArrayList<GroceryItem> currList = LCV(groceries);
-		currList = MRV(groceries, bags, maxBags);
+		//Base case, return true.
+		if(groceries.size() == 0) {
+			return "Success";
+		}
+		//Get an ordered ArrayList of items.
+		ArrayList<GroceryItem> ordList = LCV(groceries);
+		ordList = MRV(ordList, bags, maxBags);
 
-		//While newBag, test bag.
-		//If success, return, else continue looping.
-		//If out of loops, fail.
-		/*for(int i = 0; i < totalItems; i++) {
-			//Find best bag and item to it.
-			int idealBag = idealBag(currItem, bags, maxBags);
-			if(idealBag == -1) {
-				System.out.println("Something is wrong with the heuristics");
-				for(GroceryItem GI: groceries) {
-					System.out.println(GI.toString());
-				}
-				for(GroceryBag GB: bags) {
-					System.out.println(GB.toString());
-				}
-				System.exit(1);
-			} else {
-				String bagResult = bags.get(idealBag).addItem(currItem);
-				if(bagResult.contains("Failed")) {
-					System.out.println(bagResult);
-					System.out.println("Something is wrong with addItem.");
-				} else {
-					//Update objects and Recursively search(DFS) for full solution
+		//Test all bags. If empty, break. TODO If time, continue on identical (constraints and weight).
+		for(int i = 0; i < totalItems; i++) {
+			//Test all items.
+			for(int b = 0; b < maxBags; b++) {
+				String addResult = bags.get(b).addItem(ordList.get(i)); //Add item.
+				
+				//If failed to add, check next bag.
+				if(addResult.contains("Fail")) {
+//					System.out.println("addResult Failed!\n" + addResult + "\n");
+					continue;
+				} else { //If success, then update objects and call depthFirstSearch again.
+					GroceryItem currItem = ordList.get(i);
 					int currItemID = currItem.getID();
-					groceries.remove(currItem);
+					ordList.remove(ordList.get(i));
 					totalItems--;
-					String searchResult = depthFirstSearch(groceries, bags, totalItems, maxBags);
+					String searchResult = depthFirstSearch(ordList, bags, totalItems, maxBags);
 					if(searchResult.contains("Failed")) {
-						groceries.add(currItemID, currItem);
+						ordList.add(currItemID, currItem);
 						totalItems++;
 						continue;
 					} else {
-						
+						return "Success";
 					}
-					
 				}
-			}
+				
+			} //End items loop.
+		} //End bags loop.
+		//For Debugging.
+		System.out.println("DFS Failed!");
+		System.out.println("Total items: " + totalItems);
+		for(GroceryItem GI: groceries) {
+			System.out.println();
+			System.out.println(GI.toString());
 		}
-		*/
-		return "";
+		System.out.println("Total bags: " + maxBags);
+		for(GroceryBag bag: bags) {
+			System.out.println(bag.toString());
+		}
+		return "Failed";
 	}
 
 	/**
@@ -177,7 +193,7 @@ public class GroceryBagger {
 		}
 		return -1;
 	}
-	*/
+
 	/**
 	 * Uses LCV to return an ordered ArrayList of groceries
 	 * that came from the provided ArrayList of groceries.
@@ -260,7 +276,6 @@ public class GroceryBagger {
 					ordItems.add(i, GI);
 					break;
 				}
-
 			} //End order values loop.
 		} //End groceries loop.
 		return ordItems;

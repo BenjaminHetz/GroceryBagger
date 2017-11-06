@@ -47,6 +47,7 @@ public class GroceryBag {
     	} else if(!constraintBits.get(id)) {
     		result = "Failed: constraints";
     	} else {
+    		items.add(item);
     		currItems++;
     		currWeight += item.getWeight();
     		constraintBits.and(item.getConstraintBits());
@@ -98,19 +99,44 @@ public class GroceryBag {
     	return result;
     }
     
-    //Once testing is done, needs updated to proper format.
+    
+    // toString to properly print for the assignment.
     public String toString(){
-        String returnString = "Bag " + bagID;
-        
-        if(empty()) {
+        String returnString = "";
+        for(GroceryItem GI: items) {
+			returnString += GI.getItemName() + "\t";
+		}
+        return returnString;
+    }
+    
+  
+    /**
+     * Additional toString method for programming purposes.
+     * This toString will print out additional information so someone
+     * programming with this class can better understand what their program
+     * is doing.
+     * 
+     * @param debug "quick" or "detailed"
+     * @return A string of additional information about the bag.
+     */
+    public String toString(String debug){
+    	String returnString = "Bag " + bagID;
+    	if(empty()) {
         	returnString += " is empty.";
-        } else {
-        	returnString += " contains " + currItems + ":";
-	        for(GroceryItem item: items) {
-	        	returnString += "\n\t" + item.toString();
-	        }
-        }
-        
+    	} else {
+    		if(debug.equals("quick")) {
+    			returnString += ":\n";
+    			for(GroceryItem GI: items) {
+    				returnString += GI.getItemName() + "\t";
+    			}
+    		}
+    		else if(debug.equals("detailed")) {
+    			returnString += " contains " + currItems + ":";
+    	        for(GroceryItem item: items) {
+    	        	returnString += "\n\t" + item.toString();
+    	        }
+    		}
+    	}
         return returnString;
     }
 }
