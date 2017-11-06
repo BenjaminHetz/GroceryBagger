@@ -101,29 +101,34 @@ public class GroceryItem {
         this.constraintBits.set(this.id);
     }
     
-    public String toString(){
+    public String toString(String option){
         String returnString = "";
-        returnString += "Name: " + this.itemName + "\n";
-        returnString += "Weight: " + this.weight + "\n";
-        if (this.constraints.size() != 0) {
-            returnString += "Constraint type: ";
-            if (this.plusConstraint) {
-                returnString += "Plus Constraint\n";
-            } else {
-                returnString += "Minus Constraint\n";
-            }
+        if (option.equals("detailed")) {
+            returnString += "Name: " + this.itemName + "\n";
+            returnString += "Weight: " + this.weight + "\n";
+            if (this.constraints.size() != 0) {
+                returnString += "Constraint type: ";
+                if (this.plusConstraint) {
+                    returnString += "Plus Constraint\n";
+                } else {
+                    returnString += "Minus Constraint\n";
+                }
 
-            returnString += "Constraining Items: \n";
-            for (String s : this.constraints) {
-                returnString += "\t" + s + "\n";
+                returnString += "Constraining Items: \n";
+                for (String s : this.constraints) {
+                    returnString += "\t" + s + "\n";
+                }
+                returnString += "Constraint Bit Set: \n";
+                returnString += this.constraintBits + "\n";
+            } else {
+                returnString += "Constraint Bit Set: \n";
+                returnString += this.constraintBits + "\n";
+                returnString += "No Constraints\n";
             }
-            returnString += "Constraint Bit Set: \n";
-            returnString += this.constraintBits + "\n";
+            return returnString;
         } else {
-        	returnString += "Constraint Bit Set: \n";
-            returnString += this.constraintBits + "\n";
-            returnString += "No Constraints\n";
+            returnString += this.itemName;
+            return returnString;
         }
-        return returnString;
     }
 }

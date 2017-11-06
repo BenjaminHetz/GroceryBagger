@@ -1,9 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 public class GroceryBagger {
 	
@@ -263,9 +260,59 @@ public class GroceryBagger {
 					ordItems.add(i, GI);
 					break;
 				}
+
 			} //End order values loop.
 		} //End groceries loop.
 		return ordItems;
 	}
-
+//	private static Map<GroceryItem, GroceryBag> minConflicts(ArrayList<GroceryBag> bags, ArrayList<GroceryItem> items, int maxSteps){
+//		Map<GroceryItem, GroceryBag> solution = new HashMap<>();
+//		Random r = new Random();
+//		//generate a random assignment of all items
+//		for (GroceryItem GI: items){
+//			solution.put(GI, bags.get(r.nextInt(bags.size())));
+//		}
+//		for (int i = 0; i < maxSteps; i++){
+//			ArrayList<GroceryItem> failedItems = isSolution(solution);
+//			if (failedItems.isEmpty()){
+//				//add the items as they appear in this map and that is solution
+//				for (GroceryItem GI: solution.keySet()){
+//					solution.get(GI).addItem(GI);
+//				}
+//				return solution;
+//			} else {
+//				//pick a random failed item
+//				GroceryItem itemToChange = failedItems.get(r.nextInt(failedItems.size()));
+//				GroceryBag bestBag = null;
+//
+//				int minConflicts = Integer.MAX_VALUE;
+//				for (GroceryBag GB: bags){
+//					int numConflicts = 0;
+//					BitSet conflictingItemBits = GB.getConstraintBits();
+//					for (GroceryItem GI: GB.getItems()){
+//						if (conflictingItemBits.get(GI.getID())){
+//							//Not a conflict since that item can be bagged
+//						} else {
+//							numConflicts++;
+//						}
+//					}
+//					if (numConflicts < minConflicts){
+//						minConflicts = numConflicts;
+//						bestBag = GB;
+//					}
+//				}
+//				solution.replace(itemToChange, bestBag);
+//			}
+//		}
+//	}
+	private static ArrayList<GroceryItem> isSolution(Map<GroceryItem, GroceryBag> possibleSolution){
+		ArrayList<GroceryItem> failedItems = new ArrayList<>();
+		for (GroceryItem GI: possibleSolution.keySet()){
+			String result = possibleSolution.get(GI).addItem(GI);
+			if (result.equals("Failed: weight") || result.equals("Failed: constraints")){
+				failedItems.add(GI);
+			}
+		}
+		return failedItems;
+	}
 }
