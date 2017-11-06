@@ -110,17 +110,17 @@ public class GroceryBagger {
 
 	}
 
-	private static void depthFirstSearch(ArrayList<GroceryItem> groceries, ArrayList<GroceryBag> bags, int totalItems, int maxBags) {
+	private static String depthFirstSearch(ArrayList<GroceryItem> groceries, ArrayList<GroceryBag> bags, int totalItems, int maxBags) {
 		
-		for(int i = 0; i < totalItems; i++) {
-			ArrayList<GroceryItem> currList = MRV(groceries, bags, maxBags);
-			GroceryItem currItem;
-			if(currList.size() == 1) {
-				currItem = currList.get(0);
-			} else {
-				currItem = LCV(currList);
-			}
-			
+		//Create Ord ArrayList of items.
+		ArrayList<GroceryItem> currList = LCV(groceries);
+		currList = MRV(groceries, bags, maxBags);
+
+		//While newBag, test bag.
+		//If success, return, else continue looping.
+		//If out of loops, fail.
+		/*for(int i = 0; i < totalItems; i++) {
+			//Find best bag and item to it.
 			int idealBag = idealBag(currItem, bags, maxBags);
 			if(idealBag == -1) {
 				System.out.println("Something is wrong with the heuristics");
@@ -132,19 +132,29 @@ public class GroceryBagger {
 				}
 				System.exit(1);
 			} else {
-				String result = bags.get(idealBag).addItem(currItem);
-				if(result.contains("Failed")) {
-					System.out.println(result);
+				String bagResult = bags.get(idealBag).addItem(currItem);
+				if(bagResult.contains("Failed")) {
+					System.out.println(bagResult);
 					System.out.println("Something is wrong with addItem.");
 				} else {
+					//Update objects and Recursively search(DFS) for full solution
+					int currItemID = currItem.getID();
+					groceries.remove(currItem);
+					totalItems--;
+					String searchResult = depthFirstSearch(groceries, bags, totalItems, maxBags);
+					if(searchResult.contains("Failed")) {
+						groceries.add(currItemID, currItem);
+						totalItems++;
+						continue;
+					} else {
+						
+					}
 					
 				}
 			}
 		}
-		
-		
-		
-		
+		*/
+		return "";
 	}
 
 	/**
@@ -155,6 +165,7 @@ public class GroceryBagger {
 	 * @param maxBags
 	 * @return
 	 */
+	/* No longer needed?
 	private static int idealBag(GroceryItem currItem, ArrayList<GroceryBag> bags, int maxBags) {
 		GroceryBag currBag;
 		for(int i = 0; i < maxBags; i++) {
@@ -167,64 +178,94 @@ public class GroceryBagger {
 				}
 			}
 		}
-		
 		return -1;
-		
-		
+	}
+	*/
+	/**
+	 * Uses LCV to return an ordered ArrayList of groceries
+	 * that came from the provided ArrayList of groceries.
+	 * 
+	 * @param groceries The ArrayList to sort.
+	 * @return ArrayList of ordered groceries.
+	 */
+	private static ArrayList<GroceryItem> LCV(ArrayList<GroceryItem> groceries) {
+		//Find LCVs
+		ArrayList<GroceryItem> ordItems = new ArrayList<>();
+		//Get and place every grocery.
+		for(GroceryItem GI: groceries) {
+			int currGIValue = GI.getConstraintBits().cardinality();
+			//Compare each grocery to those already in the list.
+			for(int i = 0; i < ordItems.size(); i++) {
+				if(ordItems.size() == 0) {
+					ordItems.add(GI);
+					break;
+				}
+				int currOrdValue = ordItems.get(i).getConstraintBits().cardinality();
+				if(currGIValue > currOrdValue){
+					ordItems.add(i, GI);
+					break;
+				} else if(currGIValue == currOrdValue) {
+					int currOrdWeight = ordItems.get(i).getWeight();
+					int currGIWeight = GI.getWeight();
+					if(currGIWeight >= currOrdWeight) {
+						ordItems.add(i, GI);
+						break;
+					}
+				}
+			} //End OrdItems loop.			
+		} //End GI loop
+		return ordItems;
 	}
 
-	//Minimum Remaining Values...Minimum bags available.
+	/**
+	 * Uses MRV to return an further ordered ArrayList of groceries.
+	 * MRV uses the relative order from the LCV to return a list 
+	 * ordered by both heuristics.
+	 * 
+	 * @param groceries The LCV ordered list of groceries
+	 * @param bags The bag ArrayList
+	 * @param maxBags Total number of bags available.
+	 * @return ArrayList ordered by MRV and LCV.
+	 */
 	private static ArrayList<GroceryItem> MRV(ArrayList<GroceryItem> groceries, ArrayList<GroceryBag> bags, int maxBags) {
-		int minValue = 10000;
-		ArrayList<GroceryItem> minItems = new ArrayList<>();
+		ArrayList<GroceryItem> ordItems = new ArrayList<>();
+		//Add each item.
 		for(GroceryItem GI: groceries) {
-			int currValue = 0;
+			int currGIValue = 0;
 			for(int i = 0; i < maxBags; i++) {
 				if(bags.get(i).empty()) {
-					currValue += maxBags - i;
+					currGIValue += maxBags - i;
 				} else {
 					if(bags.get(i).getConstraintBits().get(GI.getID())) {
-						currValue++;
+						currGIValue++;
 					}
 				}
 
 			}
-			if(currValue < minValue) {
-				minValue = currValue;
-				minItems.removeAll(minItems);
-				minItems.add(GI);
-			}
-			else if(currValue == minValue) {
-				minItems.add(GI);
-			}
-		}
-		return minItems;
-	}
-	
-	//Least Constraining Value...most 1s in BitSet
-	private static GroceryItem LCV(ArrayList<GroceryItem> groceries) {
-		//Find LCVs
-		ArrayList<GroceryItem> maxItems = new ArrayList<>();
-		int maxValue = 0;
-		for(GroceryItem GI: groceries) {
-			int curValue = GI.getConstraintBits().cardinality();
-			if(curValue > maxValue) {
-				maxItems.removeAll(maxItems);
-				maxValue = curValue;
-				maxItems.add(GI);
-			}
-			else if(curValue == maxValue) {
-				maxItems.add(GI);
-			}
-		}
-		//Return random LCV //TODO most weight, not random
-		if(maxItems.size() == 1) {
-			return maxItems.get(0);
-		} else {
-			Random rand = new Random();
-			int randItem = rand.nextInt(maxItems.size());
-			return maxItems.get(randItem);
-		}
+			//Compare item to current ordered list and add.
+			for(int i = 0; i < ordItems.size(); i++) {
+				if(ordItems.size() == 0) {
+					ordItems.add(GI);
+					break;
+				}
+				int currOrdValue = 0;
+				//Get current ordered value.
+				for(int j = 0; j < maxBags; j++) {
+					if(bags.get(j).empty()) {
+						currOrdValue += maxBags - j;
+					} else {
+						if(bags.get(j).getConstraintBits().get(GI.getID())) {
+							currOrdValue++;
+						}
+					}
+				} //End bags loop
+				if(currGIValue > currOrdValue) {
+					ordItems.add(i, GI);
+					break;
+				}
+			} //End order values loop.
+		} //End groceries loop.
+		return ordItems;
 	}
 
 }
