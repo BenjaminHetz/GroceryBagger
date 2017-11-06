@@ -169,14 +169,14 @@ public class GroceryBagger {
 		return "Failed";
 	}
 
-	/**
-	 * Finds the best bag to insert the given item
-	 * 
-	 * @param currItem
-	 * @param bags
-	 * @param maxBags
-	 * @return
-	 */
+//	/**
+//	 * Finds the best bag to insert the given item
+//	 *
+//	 * @param currItem
+//	 * @param bags
+//	 * @param maxBags
+//	 * @return
+//	 */
 	/* No longer needed?
 	private static int idealBag(GroceryItem currItem, ArrayList<GroceryBag> bags, int maxBags) {
 		GroceryBag currBag;
@@ -304,16 +304,25 @@ public class GroceryBagger {
 				return solution;
 			} else {
 				//pick a random failed item
+				//save original mapping for that item so we can restore it if need be
 				GroceryItem itemToChange = failedItems.get(r.nextInt(failedItems.size()));
 				GroceryBag bestBag = null;
 
 				int minConflicts = Integer.MAX_VALUE;
 				for (GroceryBag GB: bags){
+//					solution.replace(itemToChange, GB);
+//					ArrayList<GroceryItem> trying = isSolution(solution);
+//					if (trying.size() < minConflicts){
+//						minConflicts = trying.size();
+//						bestBag = GB;
+//					} else{
+//						solution.replace(itemToChange, bestBag);
+//					}
 					int numConflicts = 0;
-					BitSet conflictingItemBits = GB.getConstraintBits();
+					BitSet conflictingItemBits = itemToChange.getConstraintBits();
 					for (GroceryItem GI: GB.getItems()){
 						if (conflictingItemBits.get(GI.getID())){
-							//Not a conflict since that item can be bagged
+							//Not a conflict since that item can be bagged with the other one
 						} else {
 							numConflicts++;
 						}
