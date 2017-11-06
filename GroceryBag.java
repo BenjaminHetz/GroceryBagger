@@ -23,6 +23,7 @@ public class GroceryBag {
     public GroceryBag(int maxWeight, int bagID, int totalItems){
         this.items = new ArrayList<GroceryItem>();
         this.constraintBits = new BitSet(totalItems);
+        this.constraintBits.flip(0, totalItems);
 
         this.bagID = bagID;
         this.currItems = 0;
