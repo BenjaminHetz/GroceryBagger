@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -121,6 +122,24 @@ public class GroceryBagger {
 			}
 			
 			int idealBag = idealBag(currItem, bags, maxBags);
+			if(idealBag == -1) {
+				System.out.println("Something is wrong with the heuristics");
+				for(GroceryItem GI: groceries) {
+					System.out.println(GI.toString());
+				}
+				for(GroceryBag GB: bags) {
+					System.out.println(GB.toString());
+				}
+				System.exit(1);
+			} else {
+				String result = bags.get(idealBag).addItem(currItem);
+				if(result.contains("Failed")) {
+					System.out.println(result);
+					System.out.println("Something is wrong with addItem.");
+				} else {
+					
+				}
+			}
 		}
 		
 		
@@ -128,15 +147,28 @@ public class GroceryBagger {
 		
 	}
 
+	/**
+	 * Finds the best bag to insert the given item
+	 * 
+	 * @param currItem
+	 * @param bags
+	 * @param maxBags
+	 * @return
+	 */
 	private static int idealBag(GroceryItem currItem, ArrayList<GroceryBag> bags, int maxBags) {
 		GroceryBag currBag;
 		for(int i = 0; i < maxBags; i++) {
 			if(bags.get(i).empty()) {
 				return i;
+			} else {
+				BitSet currBitSet = bags.get(i).getConstraintBits();
+				if(currBitSet.get(currItem.getID())) {
+					return i;
+				}
 			}
 		}
 		
-		return 0;
+		return -1;
 		
 		
 	}
