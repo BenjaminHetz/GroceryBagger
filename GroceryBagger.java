@@ -93,14 +93,7 @@ public class GroceryBagger {
 				System.out.println(bag.toString());
 			}
 			
-			ArrayList<GroceryItem> currList = MRV(groceries, bags, maxBags);
-			GroceryItem currItem;
-			if(currList.size() == 1) {
-				currItem = currList.get(0);
-			} else {
-				currItem = LCV(currList);
-			}
-			
+			depthFirstSearch(groceries, bags, totalItems, maxBags);
 			
 			
 		} catch(NumberFormatException e) {
@@ -114,6 +107,38 @@ public class GroceryBagger {
 			e.printStackTrace();
 		}
 
+	}
+
+	private static void depthFirstSearch(ArrayList<GroceryItem> groceries, ArrayList<GroceryBag> bags, int totalItems, int maxBags) {
+		
+		for(int i = 0; i < totalItems; i++) {
+			ArrayList<GroceryItem> currList = MRV(groceries, bags, maxBags);
+			GroceryItem currItem;
+			if(currList.size() == 1) {
+				currItem = currList.get(0);
+			} else {
+				currItem = LCV(currList);
+			}
+			
+			int idealBag = idealBag(currItem, bags, maxBags);
+		}
+		
+		
+		
+		
+	}
+
+	private static int idealBag(GroceryItem currItem, ArrayList<GroceryBag> bags, int maxBags) {
+		GroceryBag currBag;
+		for(int i = 0; i < maxBags; i++) {
+			if(bags.get(i).empty()) {
+				return i;
+			}
+		}
+		
+		return 0;
+		
+		
 	}
 
 	//Minimum Remaining Values...Minimum bags available.
@@ -160,7 +185,7 @@ public class GroceryBagger {
 				maxItems.add(GI);
 			}
 		}
-		//Return random LCV
+		//Return random LCV //TODO most weight, not random
 		if(maxItems.size() == 1) {
 			return maxItems.get(0);
 		} else {
