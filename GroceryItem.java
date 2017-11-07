@@ -101,6 +101,12 @@ public class GroceryItem {
         this.constraintBits.set(this.id);
     }
     
+    public String toString() {
+    	String returnString = "";
+    	returnString += this.itemName;
+        return returnString;
+    }
+    
     public String toString(String option){
         String returnString = "";
         if (option.equals("detailed")) {
@@ -125,10 +131,7 @@ public class GroceryItem {
                 returnString += this.constraintBits + "\n";
                 returnString += "No Constraints\n";
             }
-            return returnString;
-        } else {
-            returnString += this.itemName;
-            return returnString;
-        }
+        } 
+        return returnString;
     }
 }
