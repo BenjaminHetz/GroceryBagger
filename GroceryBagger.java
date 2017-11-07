@@ -127,32 +127,32 @@ public class GroceryBagger {
 		//Get an ordered ArrayList of items.
 		ArrayList<GroceryItem> ordList = LCV(groceries);
 		ordList = MRV(ordList, bags, maxBags);
-
-		//Test all bags. If empty, break. TODO If time, continue on identical (constraints and weight).
+		//Test all items.
 		for(int i = 0; i < totalItems; i++) {
-			//Test all items.
+			//Test all bags. If empty, break. TODO If time, continue on identical (constraints and weight).
 			for(int b = 0; b < maxBags; b++) {
 				String addResult = bags.get(b).addItem(ordList.get(i)); //Add item.
-				
 				//If failed to add, check next bag.
 				if(addResult.contains("Fail")) {
-//					System.out.println("addResult Failed!\n" + addResult + "\n");
 					continue;
 				} else { //If success, then update objects and call depthFirstSearch again.
 					GroceryItem currItem = ordList.get(i);
-					int currItemID = currItem.getID();
-					ordList.remove(ordList.get(i));
+					int currItemID = groceries.indexOf(currItem);
+					groceries.remove(currItemID);
 					totalItems--;
-					String searchResult = depthFirstSearch(ordList, bags, totalItems, maxBags);
+					String searchResult = depthFirstSearch(groceries, bags, totalItems, maxBags);
+					//If failed, continue on to next bag/item. If success, return.
 					if(searchResult.contains("Failed")) {
-						ordList.add(currItemID, currItem);
+						groceries.add(currItemID, currItem);
 						totalItems++;
+						if(bags.get(b).empty()) {
+							break;
+						}
 						continue;
 					} else {
 						return "Success";
 					}
 				}
-				
 			} //End items loop.
 		} //End bags loop.
 		//For Debugging.
@@ -169,30 +169,6 @@ public class GroceryBagger {
 		return "Failed";
 	}
 
-//	/**
-//	 * Finds the best bag to insert the given item
-//	 *
-//	 * @param currItem
-//	 * @param bags
-//	 * @param maxBags
-//	 * @return
-//	 */
-	/* No longer needed?
-	private static int idealBag(GroceryItem currItem, ArrayList<GroceryBag> bags, int maxBags) {
-		GroceryBag currBag;
-		for(int i = 0; i < maxBags; i++) {
-			if(bags.get(i).empty()) {
-				return i;
-			} else {
-				BitSet currBitSet = bags.get(i).getConstraintBits();
-				if(currBitSet.get(currItem.getID())) {
-					return i;
-				}
-			}
-		}
-		return -1;
-	}
-
 	/**
 	 * Uses LCV to return an ordered ArrayList of groceries
 	 * that came from the provided ArrayList of groceries.
@@ -207,11 +183,12 @@ public class GroceryBagger {
 		for(GroceryItem GI: groceries) {
 			int currGIValue = GI.getConstraintBits().cardinality();
 			//Compare each grocery to those already in the list.
-			for(int i = 0; i < ordItems.size(); i++) {
-				if(ordItems.size() == 0) {
-					ordItems.add(GI);
-					break;
-				}
+			if(ordItems.size() == 0) {
+				ordItems.add(GI);
+				continue;
+			}
+			int max = ordItems.size();
+			for(int i = 0; i < max; i++) {
 				int currOrdValue = ordItems.get(i).getConstraintBits().cardinality();
 				if(currGIValue > currOrdValue){
 					ordItems.add(i, GI);
@@ -223,8 +200,13 @@ public class GroceryBagger {
 						ordItems.add(i, GI);
 						break;
 					}
+				} else {
+					if(i == (max - 1)) {
+						ordItems.add(GI);
+					}
 				}
-			} //End OrdItems loop.			
+			} //End OrdItems loop.
+			
 		} //End GI loop
 		return ordItems;
 	}
@@ -251,14 +233,16 @@ public class GroceryBagger {
 						currGIValue++;
 					}
 				}
-
 			}
+			//If first ordered item, just add.
+			if(ordItems.size() == 0) {
+				ordItems.add(GI);
+				continue;
+			}
+			
 			//Compare item to current ordered list and add.
-			for(int i = 0; i < ordItems.size(); i++) {
-				if(ordItems.size() == 0) {
-					ordItems.add(GI);
-					break;
-				}
+			int max = ordItems.size();
+			for(int i = 0; i < max; i++) {
 				int currOrdValue = 0;
 				//Get current ordered value.
 				for(int j = 0; j < maxBags; j++) {
@@ -270,9 +254,14 @@ public class GroceryBagger {
 						}
 					}
 				} //End bags loop
-				if(currGIValue > currOrdValue) {
+				if(currGIValue < currOrdValue) {
 					ordItems.add(i, GI);
 					break;
+				} else {
+					if(i == (max - 1)) {
+						ordItems.add(GI);
+						break;
+					}
 				}
 			} //End order values loop.
 		} //End groceries loop.
