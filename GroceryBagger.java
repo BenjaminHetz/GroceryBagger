@@ -71,6 +71,18 @@ public class GroceryBagger {
 			for(int i = 0; i < maxBags; i++) {
 				bags.add(new GroceryBag(bagSize, idCounter++, totalItems));
 			}
+			if (localSearch){
+				String result = minConflicts(bags, groceries, 50);
+				if (result.equals("Failure")){
+					System.out.println("Failure");
+					System.exit(1);
+				} else if (result.equals("Success")){
+					for (GroceryBag GB: bags){
+						System.out.println(GB);
+					}
+					System.exit(0);
+				}
+			}
 			//Search bags with DFS
 			String result = depthFirstSearch(groceries, bags, totalItems, maxBags);
 			System.out.println(result);
@@ -276,7 +288,7 @@ public class GroceryBagger {
 	 * @param maxSteps
 	 * @return
 	 */
-	private static Map<GroceryItem, GroceryBag> minConflicts(ArrayList<GroceryBag> bags, ArrayList<GroceryItem> items, int maxSteps){
+	private static String minConflicts(ArrayList<GroceryBag> bags, ArrayList<GroceryItem> items, int maxSteps){
 		Map<GroceryItem, GroceryBag> solution = new HashMap<>();
 		Random r = new Random();
 		//generate a random assignment of all items
@@ -290,12 +302,12 @@ public class GroceryBagger {
 				for (GroceryItem GI: solution.keySet()){
 					solution.get(GI).addItem(GI);
 				}
-				return solution;
+				return "Success";
 			} else {
 				//pick a random failed item
 				//save original mapping for that item so we can restore it if need be
 				GroceryItem itemToChange = failedItems.get(r.nextInt(failedItems.size()));
-				GroceryBag bestBag = null;
+				ArrayList<GroceryBag> bestBags = new ArrayList<>();
 
 				int minConflicts = Integer.MAX_VALUE;
 				for (GroceryBag GB: bags){
@@ -310,21 +322,26 @@ public class GroceryBagger {
 					int numConflicts = 0;
 					BitSet conflictingItemBits = itemToChange.getConstraintBits();
 					for (GroceryItem GI: GB.getItems()){
-						if (conflictingItemBits.get(GI.getID())){
+						if (conflictingItemBits.get(GI.getID()) && GI.getConstraintBits().get(itemToChange.getID())){
 							//Not a conflict since that item can be bagged with the other one
 						} else {
 							numConflicts++;
 						}
 					}
+					if (numConflicts == minConflicts){
+						bestBags.add(GB);
+					}
 					if (numConflicts < minConflicts){
 						minConflicts = numConflicts;
-						bestBag = GB;
+						bestBags.clear();
+						bestBags.add(GB);
 					}
 				}
-				solution.replace(itemToChange, bestBag);
+				//if we had more than one "best" bag to put it in, we will pick a random one
+				solution.replace(itemToChange, bestBags.get(r.nextInt(bestBags.size())));
 			}
 		}
-		return solution;
+		return "Failure";
 	}
 	
 	/**
