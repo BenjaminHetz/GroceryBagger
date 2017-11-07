@@ -45,8 +45,14 @@ public class GroceryBag {
     	if(item.getWeight() + currWeight > maxWeight) {
     		result = "Failed: weight";
     	} else if(!constraintBits.get(id)) {
-    		result = "Failed: constraints";
+    		result = "Failed: Bag can't take item";
     	} else {
+    		for(GroceryItem GI: items) {
+    			if(!item.getConstraintBits().get(GI.getID())) {
+    				result = "Failed: Item can't go in bag";
+    				return result;
+    			}
+    		}
     		items.add(item);
     		currItems++;
     		currWeight += item.getWeight();
