@@ -29,7 +29,6 @@ public class GroceryBagger {
 				}
 			}
 		}
-		
 		//Parse file and get grocery info.
 		File groceryProblem = new File(args[0]);
 		try {
@@ -38,19 +37,15 @@ public class GroceryBagger {
 			ArrayList<GroceryItem> groceries = new ArrayList<>();
 			//Initialize Scanner.
 			Scanner scan = new Scanner(groceryProblem);
-			
 			//Get data from scanner and close it.
 			maxBags = Integer.parseInt(scan.nextLine());
 			bagSize = Integer.parseInt(scan.nextLine());
-//			System.out.println("Max bags: " + maxBags + "\nMax Capacity per Bag: " + bagSize);
 			int idCounter = 0;
 			while(scan.hasNextLine()) {
 				ArrayList<String> constraints = new ArrayList<>();
 				String line = scan.nextLine();
 				Scanner lineScan = new Scanner(line);
-
 				String itemName = lineScan.next();
-
 				int weight = lineScan.nextInt();
 				boolean plusConstraint = false;
 				if (lineScan.hasNext()){
@@ -62,22 +57,13 @@ public class GroceryBagger {
 					}
 				}
 				groceries.add(new GroceryItem(itemName, plusConstraint, weight, constraints, idCounter++));
-
 				lineScan.close();
 			}
 			scan.close();
-
 			//Set bits now that we have each item.
 			for(GroceryItem GI: groceries) {
 				GI.setConstraintBits(idCounter, groceries);
-			}
-			
-			// Print items to check proper creation.
-//			for(GroceryItem GI: groceries) {
-//				System.out.println();
-//				System.out.println(GI.toString());
-//			}
-			
+			}		
 			//Initialize Bags
 			int totalItems = idCounter;
 			idCounter = 0;
@@ -85,15 +71,10 @@ public class GroceryBagger {
 			for(int i = 0; i < maxBags; i++) {
 				bags.add(new GroceryBag(bagSize, idCounter++, totalItems));
 			}
-			
-			// Print bags to check proper creation.
-//			for(GroceryBag bag: bags) {
-//				System.out.println(bag.toString());
-//			}
-			
+			//Search bags with DFS
 			String result = depthFirstSearch(groceries, bags, totalItems, maxBags);
+			System.out.println(result);
 			if(result.equals("Success")){
-				System.out.println(result);
 				for(GroceryBag bag: bags) {
 					System.out.println(bag.toString());
 				}
@@ -108,6 +89,28 @@ public class GroceryBagger {
 			System.out.println("An exception occured that was not accounted for.");
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Checks for arc consistency on the current CSP.
+	 * 
+	 * @return True if arc consistent, false otherwise.
+	 */
+	public static boolean arcConsistency(ArrayList<GroceryItem> groceries, ArrayList<GroceryBag> bags, int totalItems, int maxBags) {
+		boolean arcCon = false;
+		for(GroceryItem GI: groceries) {
+			arcCon = false;
+			for(GroceryBag GB: bags) {
+				if(GB.getConstraintBits().get(GI.getID())) {
+					arcCon = true;
+					break;
+				}
+			}
+			if(!arcCon) {
+				return arcCon;
+			}
+		}
+		return arcCon;
 	}
 
 	/**
@@ -129,7 +132,7 @@ public class GroceryBagger {
 		ordList = MRV(ordList, bags, maxBags);
 		//Test all items.
 		for(int i = 0; i < totalItems; i++) {
-			//Test all bags. If empty, break. TODO If time, continue on identical (constraints and weight).
+			//Test all bags.
 			for(int b = 0; b < maxBags; b++) {
 				String addResult = bags.get(b).addItem(ordList.get(i)); //Add item.
 				//If failed to add, check next bag.
@@ -142,10 +145,10 @@ public class GroceryBagger {
 					totalItems--;
 					String searchResult = depthFirstSearch(groceries, bags, totalItems, maxBags);
 					//If failed, continue on to next bag/item. If success, return.
-					if(searchResult.contains("Failed")) {
+					if(searchResult.contains("Fail")) {
 						groceries.add(currItemID, currItem);
 						totalItems++;
-						if(bags.get(b).empty()) {
+						if(bags.get(b).empty()) { //Break on empty bags, because each subsequent bag will be the same. TODO If time, continue on identical (constraints and weight).
 							break;
 						}
 						continue;
@@ -156,17 +159,17 @@ public class GroceryBagger {
 			} //End items loop.
 		} //End bags loop.
 		//For Debugging.
-		System.out.println("DFS Failed!");
-		System.out.println("Total items: " + totalItems);
-		for(GroceryItem GI: groceries) {
-			System.out.println();
-			System.out.println(GI.toString());
-		}
-		System.out.println("Total bags: " + maxBags);
-		for(GroceryBag bag: bags) {
-			System.out.println(bag.toString());
-		}
-		return "Failed";
+//		System.out.println("DFS Failed!");
+//		System.out.println("Total items: " + totalItems);
+//		for(GroceryItem GI: groceries) {
+//			System.out.println();
+//			System.out.println(GI.toString());
+//		}
+//		System.out.println("Total bags: " + maxBags);
+//		for(GroceryBag bag: bags) {
+//			System.out.println(bag.toString());
+//		}
+		return "Failure";
 	}
 
 	/**
@@ -200,12 +203,11 @@ public class GroceryBagger {
 						ordItems.add(i, GI);
 						break;
 					}
-				} else {
-					if(i == (max - 1)) {
-						ordItems.add(GI);
-					}
 				}
 			} //End OrdItems loop.
+			if(!ordItems.contains(GI)) {
+				ordItems.add(GI);
+			}
 			
 		} //End GI loop
 		return ordItems;
@@ -257,13 +259,11 @@ public class GroceryBagger {
 				if(currGIValue < currOrdValue) {
 					ordItems.add(i, GI);
 					break;
-				} else {
-					if(i == (max - 1)) {
-						ordItems.add(GI);
-						break;
-					}
-				}
+				} 
 			} //End order values loop.
+			if(!ordItems.contains(GI)) {
+				ordItems.add(GI);
+			}
 		} //End groceries loop.
 		return ordItems;
 	}
