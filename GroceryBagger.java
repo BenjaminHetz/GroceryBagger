@@ -11,18 +11,18 @@ public class GroceryBagger {
 			System.out.println("Usage: groceryBagger <fileName>");
 			System.exit(1);
 		}
-		boolean arcConsistency = true;
+		boolean slow = false;
 		boolean localSearch = false;
 		if(args.length > 1) {
 			if(args[1].equals("-slow")) {
-				arcConsistency = false;
+				slow = true;
 			}
 			else if(args[1].equals("-local")) {
 				localSearch = true;
 			}
 			if(args.length > 2) {
 				if(args[2].equals("-slow")) {
-					arcConsistency = false;
+					slow = true;
 				}
 				else if(args[2].equals("-local")) {
 					localSearch = true;
@@ -84,7 +84,7 @@ public class GroceryBagger {
 				}
 			}
 			//Search bags with DFS
-			String result = depthFirstSearch(groceries, bags, totalItems, maxBags);
+			String result = depthFirstSearch(groceries, bags, totalItems, maxBags, slow);
 			System.out.println(result);
 			if(result.equals("Success")){
 				for(GroceryBag bag: bags) {
@@ -108,17 +108,33 @@ public class GroceryBagger {
 	 * 
 	 * @return True if arc consistent, false otherwise.
 	 */
-	public static boolean arcConsistency(ArrayList<GroceryItem> groceries, ArrayList<GroceryBag> bags, int totalItems, int maxBags) {
+	public static boolean arcConsistency(ArrayList<GroceryItem> groceries, ArrayList<GroceryBag> bags) {
+		//No items left.
+		if(groceries.size() == 0) {
+			return true;
+		}
 		boolean arcCon = false;
+		//For every grocery, see if there is a bag it can go in.
 		for(GroceryItem GI: groceries) {
 			arcCon = false;
+			int currGIID = GI.getID();
 			for(GroceryBag GB: bags) {
-				if(GB.getConstraintBits().get(GI.getID())) {
+				BitSet currGBBits = GB.getConstraintBits();
+				if(currGBBits.get(currGIID)) { //If the bag can take the item...
 					arcCon = true;
-					break;
+					BitSet currGIBits = GI.getConstraintBits(); //Get item's bits.
+					for(GroceryItem BGI: GB.getItems()) { //Can the item be put in the bag?
+						if(!currGIBits.get(BGI.getID())) { //If the item can't go in the bag...
+							arcCon = false;
+							break;
+						}
+					}
+					if(arcCon) { //If item can be added to bag, skip other bags.
+						break;
+					}
 				}
 			}
-			if(!arcCon) {
+			if(!arcCon) { //If item can't add to any bag, not arc consistent.
 				return arcCon;
 			}
 		}
@@ -134,7 +150,7 @@ public class GroceryBagger {
 	 * @param maxBags The total number of bags to use.
 	 * @return "Success" if no problems, "Failed" otherwise.
 	 */
-	private static String depthFirstSearch(ArrayList<GroceryItem> groceries, ArrayList<GroceryBag> bags, int totalItems, int maxBags) {
+	private static String depthFirstSearch(ArrayList<GroceryItem> groceries, ArrayList<GroceryBag> bags, int totalItems, int maxBags, boolean slow) {
 		//Base case, return true.
 		if(groceries.size() == 0) {
 			return "Success";
@@ -155,7 +171,19 @@ public class GroceryBagger {
 					int currItemID = groceries.indexOf(currItem);
 					groceries.remove(currItemID);
 					totalItems--;
-					String searchResult = depthFirstSearch(groceries, bags, totalItems, maxBags);
+					//If not on the slow setting, use arc consistency checking.
+					if(!slow) {
+						if(!arcConsistency(groceries, bags)) {
+							groceries.add(currItemID, currItem);
+							totalItems++;
+							if(bags.get(b).empty()) { //Break on empty bags, because each subsequent bag will be the same.
+								System.out.println("Failed arcConsistency on empty bag.");
+								break;
+							}
+							continue;
+						}
+					}
+					String searchResult = depthFirstSearch(groceries, bags, totalItems, maxBags, slow);
 					//If failed, continue on to next bag/item. If success, return.
 					if(searchResult.contains("Fail")) {
 						groceries.add(currItemID, currItem);
