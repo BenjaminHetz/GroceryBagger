@@ -118,6 +118,11 @@ public class GroceryBag {
     	}
     	return result;
     }
+    public void clearBag(){
+    	for (int i = 0; i < this.items.size(); i++){
+    		this.removeItem(this.items.get(i));
+		}
+	}
     
     
     // toString to properly print for the assignment.

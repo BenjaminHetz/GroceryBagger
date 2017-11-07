@@ -72,16 +72,19 @@ public class GroceryBagger {
 				bags.add(new GroceryBag(bagSize, idCounter++, totalItems));
 			}
 			if (localSearch){
-				String result = minConflicts(bags, groceries, 50);
-				if (result.equals("Failure")){
-					System.out.println("Failure");
-					System.exit(1);
-				} else if (result.equals("Success")){
-					for (GroceryBag GB: bags){
-						System.out.println(GB);
+				for (int i = 0; i < 5; i++){
+					String result = minConflicts(bags, groceries, maxBags * groceries.size());
+					if (result.equals("Failure")) {
+						continue;
+					} else if (result.equals("Success")) {
+						for (GroceryBag GB : bags) {
+							System.out.println(GB);
+						}
+						System.exit(0);
 					}
-					System.exit(0);
 				}
+				System.out.println("Failure");
+				System.exit(1);
 			}
 			//Search bags with DFS
 			String result = depthFirstSearch(groceries, bags, totalItems, maxBags, slow);
@@ -328,6 +331,9 @@ public class GroceryBagger {
 			if (failedItems.isEmpty()){
 				//add the items as they appear in this map and that is solution
 				for (GroceryItem GI: solution.keySet()){
+					if (solution.get(GI).getItems().contains(GI)){
+						continue;
+					}
 					solution.get(GI).addItem(GI);
 				}
 				return "Success";
@@ -349,11 +355,16 @@ public class GroceryBagger {
 //					}
 					int numConflicts = 0;
 					BitSet conflictingItemBits = itemToChange.getConstraintBits();
-					for (GroceryItem GI: GB.getItems()){
-						if (conflictingItemBits.get(GI.getID()) && GI.getConstraintBits().get(itemToChange.getID())){
-							//Not a conflict since that item can be bagged with the other one
+					for (GroceryItem GI: solution.keySet()){
+						if (solution.get(GI).equals(GB)){
+							//do a comparison
+							if (conflictingItemBits.get(GI.getID()) && GI.getConstraintBits().get(itemToChange.getID())){
+								//Not a conflict since that item can be bagged with the other one
+							} else {
+								numConflicts++;
+							}
 						} else {
-							numConflicts++;
+							//don't bother comparing items that we aren't trying to bag together
 						}
 					}
 					if (numConflicts == minConflicts){
@@ -380,11 +391,21 @@ public class GroceryBagger {
 	 */
 	private static ArrayList<GroceryItem> isSolution(Map<GroceryItem, GroceryBag> possibleSolution){
 		ArrayList<GroceryItem> failedItems = new ArrayList<>();
+		ArrayList<GroceryBag> failedBags = new ArrayList<>();
 		for (GroceryItem GI: possibleSolution.keySet()){
+			GroceryBag bagToAddTo = possibleSolution.get(GI);
+			if (bagToAddTo.getItems().contains(GI)){
+				continue;
+			}
 			String result = possibleSolution.get(GI).addItem(GI);
 			if (result.contains("Fail")){
 				failedItems.add(GI);
+				failedBags.add(bagToAddTo);
 			}
+		}
+		for (GroceryBag GB: failedBags){
+			failedItems.addAll(GB.getItems());
+			GB.clearBag();
 		}
 		return failedItems;
 	}
