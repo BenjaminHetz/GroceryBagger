@@ -1,0 +1,12 @@
+6
+8
+bread  2 + bread
+banana 2 + grape apple carrot
+grape  3 + banana apple carrot
+apple  3 + banana grape carrot
+carrot 1 - ham
+almond 4 - ham
+ham    7 
+milk   4
+spinach 7
+chips  3 - ham milk almond
