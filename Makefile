@@ -4,8 +4,5 @@ EXE=GroceryBagger
 build: $(SRC)
 	javac $(SRC)
 
-time: build
-	./timing.sh > output.txt
-
 clean:
-	rm *.class
+	rm  -f *.class *.output *.time

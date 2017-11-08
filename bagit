@@ -1,0 +1,13 @@
+#!/bin/sh
+
+make
+if [ $# == 2 ]
+then
+	java GroceryBagger $1 $2
+elif [ $# == 1 ]
+then
+	java GroceryBagger $1
+else
+	echo "Usage ./bagit <filename> [-slow|-local]"
+fi
+make clean
