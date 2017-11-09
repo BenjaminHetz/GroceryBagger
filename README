@@ -1,0 +1,55 @@
+Authors: Tyler Egan, Ben Hetz
+Project: P2-Constraint Satisfaction
+
+Design:
+
+
+
+Tested:
+
+
+Test Results:
+On Ben's Laptop:
+************************************************************************
+Average for GroceryTest1 Over 10 Trials
+Stats:
+	3 Bags
+	7 Max Capacity
+	5 Items
+Normal: .0896s
+Local: .0921s
+Slow: .0908s
+
+
+Average for GroceryTest2 Over 10 Trials
+Stats:
+	6 Bags
+	8 Max Capacity
+	10 Items
+Normal: .1031s
+Local: .1105s
+Slow: .1037s
+
+
+Average for GroceryTest3 Over 10 Trials
+Stats:
+	10 Bags
+	15 Max Capacity
+	26 Items
+Normal: .1229s
+Local: .1344s
+Slow: .1229s
+
+
+Average for GroceryTest4OW Over 10 Trials
+NOTE: This file is guaranteed to fail by design so this is time to fail
+Stats:
+	3 Bags
+	7 Max Capacity
+	5 Items
+Normal: .0921s
+Local: .948s
+Slow: .0907s
+************************************************************************
+
+General Experience:
