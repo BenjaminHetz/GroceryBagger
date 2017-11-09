@@ -20,14 +20,6 @@ public class GroceryBagger {
 			else if(args[1].equals("-local")) {
 				localSearch = true;
 			}
-			if(args.length > 2) {
-				if(args[2].equals("-slow")) {
-					slow = true;
-				}
-				else if(args[2].equals("-local")) {
-					localSearch = true;
-				}
-			}
 		}
 		//Parse file and get grocery info.
 		File groceryProblem = new File(args[0]);
