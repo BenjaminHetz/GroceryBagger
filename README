@@ -6,6 +6,16 @@ Design:
 
 
 Tested:
+The most common thing we did to test was use print statements to show us the 
+what had happened and what the state of the program and it's information was 
+when it failed when running it against the example input provided in the 
+write up. With this, we could see if items were being sorted the way we 
+wanted them to, and if they were being added to bags the way we intended 
+them to be. After we got the result to print what we wanted, we tested by 
+created a few other input tests. One was a real-world example of products 
+and size. The next was a semi-complex example with 26 items, with varying 
+size and random constraints. The last was an example of an item that was 
+too heavy to add. 
 
 
 Test Results:
