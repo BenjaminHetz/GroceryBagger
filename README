@@ -2,7 +2,31 @@ Authors: Tyler Egan, Ben Hetz
 Project: P2-Constraint Satisfaction
 
 Design:
-
+This program begins by taking in a text file and an optional argument. The 
+text file contains the number of bags on the first line, the size of the bag 
+on the second, and items with their constraints on each subsequent line. It 
+then parses this information and stores it in an ArrayList of objects called 
+GroceryItem. These objects hold an item's name, size, constraints, unique id, 
+and weight. A BitSet used for comparing items is also stored in the 
+GroceryItem, but it is only after all the item's have been created that a 
+setConstraintBits() function can be called. It is each items unique id that 
+determines which bit it is in the constraintBits. The next thing this program 
+does is create another object called GroceryBag. This object stores an 
+ArrayList of GroceryItems (those that have been added to the bag), another 
+BitSet that says what items can go in it, the number of items in it, the weight 
+of all the items in it, and max weight it can hold, and the total number of items 
+that need bagged. Once the items and bags have been initialized, the program 
+fills the bags based on the optional argument that is, or isn't, passed. If 
+the user does not pass any argument, this program will use LCV to get a 
+preliminary ordering of the items. MRV is then used for the overall order of the
+items with the order from the LCV being used when items have the same MRV value. 
+After the items are ordered based on priority of bagging the items, a depth first
+search is used to fill the bags. Arc consistency is also used after each item is 
+added to ensure that the path currently traveled in the depth first search is not 
+a waste of time. If the search succeeds, each bag's content is printed out. If 
+it fails, then the word failure is printed out. If the user passes the argument 
+-slow, then the same thing occurs, except without arc consistency. The last thing
+that can occur is the user passing an argument of -local.
 
 
 Tested:
