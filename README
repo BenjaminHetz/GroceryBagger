@@ -27,19 +27,46 @@ a waste of time. If the search succeeds, each bag's content is printed out. If
 it fails, then the word failure is printed out. If the user passes the argument 
 -slow, then the same thing occurs, except without arc consistency. The last thing
 that can occur is the user passing an argument of -local.
+If the user passes "-local" to the program, the program attempts to bag the items
+using a local search method. This is done by generating a random mapping of items
+to bags, disregarding constraints, and then changing one unsatisfactory item at a
+time until the items are in an acceptable arrangement. To do this, we used a Map
+data structure to hold which bag each item would go to. In the Min-Conflicts
+function, an attempt would be made to put each item into its respective bag.
+If the item failed to be added for whatever reason, then we know at least one of
+the items currently mapped to that bag would need to be changed, and so they
+would all be removed and placed into a list of items that were eligible for change.
+If all items in that bag were added successfully, then those items would not be
+eligible for change. Initially, we only added the item that failed to bag to the
+list to change, but this put us into scenarios where a solution could not be reached.
+For example, in our GroceryTest1 file, if initially bread and rolls were placed into
+different bags, they would successfully be placed since they are first, and anything
+else that we attempted to add to those bags would fail. Any valid solution for that
+particular problem needs to have both rolls and bread into one bag. Thus, it was
+decided that an item failing to add did not mean that item failed, but that the
+entire bag failed. After we made this change, it was only a matter of time before
+a solution could be found. Local search has to complete in a certain number of
+steps. In this case, we chose an appropriate number of steps would be the
+number of items to bag multiplied by the number of bags we could use.
+Additionally, in our main method we ran the local search 5 times or until it
+succeeded, whichever came first. All in all, local search was slower than
+DFS with and without arc consistency on average, though in some cases it
+did run faster (obviously if a correct mapping is found at random the
+first time then the solution is found extremely quickly, though the odds
+of this are very very low).
 
 
 Tested:
-The most common thing we did to test was use print statements to show us the 
+The most common thing we did to test was use print statements to show us
 what had happened and what the state of the program and it's information was 
 when it failed when running it against the example input provided in the 
 write up. With this, we could see if items were being sorted the way we 
 wanted them to, and if they were being added to bags the way we intended 
 them to be. After we got the result to print what we wanted, we tested by 
-created a few other input tests. One was a real-world example of products 
+creating a few other input tests. One was a real-world example of products
 and size. The next was a semi-complex example with 26 items, with varying 
 size and random constraints. The last was an example of an item that was 
-too heavy to add. 
+too heavy to add, which must fail every time.
 
 
 Test Results:
