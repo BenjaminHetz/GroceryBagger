@@ -25,8 +25,7 @@ search is used to fill the bags. Arc consistency is also used after each item is
 added to ensure that the path currently traveled in the depth first search is not 
 a waste of time. If the search succeeds, each bag's content is printed out. If 
 it fails, then the word failure is printed out. If the user passes the argument 
--slow, then the same thing occurs, except without arc consistency. The last thing
-that can occur is the user passing an argument of -local.
+-slow, then the same thing occurs, except without arc consistency. 
 If the user passes "-local" to the program, the program attempts to bag the items
 using a local search method. This is done by generating a random mapping of items
 to bags, disregarding constraints, and then changing one unsatisfactory item at a
@@ -129,3 +128,29 @@ from the timing script, I think it could be modified to generate those
 itself which would be neat. As of now I have only timed the code on my
 laptop, but the results are pretty consistent.
 (Tyler)
+My main responsibility was depth first search and the GroceryBag class. 
+I made a few mistakes that were relatively easily found in the GroceryBag 
+class, otherwise that class was very easy for me. I struggle for a short 
+time to understand what MRV and LCV were supposed to do, but once I read 
+the book's explanation of it, got a response on Piazza about it, and tried 
+to code it up, I soon came to understand what to do with them. I also 
+struggled for a bit about how to order an ArrayList only where MRV values 
+are equal. I could have had the MRV function call the LCV function where 
+the values are equal (which thinking on it now, would have been a more 
+efficient approach), but instead I choose to call the LCV function first 
+to give me a relative ordering, and then when I called the MRV function, 
+I never added an item to that point in the list unless it was more important 
+than the item I was comparing it to, thus keeping the relative order from 
+the LCV function. All in all I would consider this a very mild struggling. 
+I'd say my most important experience though was a learning experience. When 
+I first got the DFS working, I made a few small changes that I thought would 
+increase it's efficiency and more importantly make it more understandable. 
+However, when I later pulled this code while in the computer lab, it had large 
+issues. Rather than just looking through the functions from start to finish 
+as if implementing the function without having to actually type the code, I 
+tried to just skim through them and quickly find the issues. As a result, I 
+spent 2+ hours accomplishing next to nothing. Later that day, I sat down and 
+walked through the code the way I first explained and corrected it within 1 
+hour. This taught me it is better not to just look for a problem, but to walk 
+through the code as if implementing it, at least in functions within small 
+classes.
