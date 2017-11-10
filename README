@@ -127,6 +127,18 @@ the project. Although I had to manually get the averages for runtimes
 from the timing script, I think it could be modified to generate those
 itself which would be neat. As of now I have only timed the code on my
 laptop, but the results are pretty consistent.
+Additionally, I was responsible for developing the GroceryItem class.
+Each item contains its own name, weight, and a list of strings
+representing the names of the items that constrain it. A boolean was used
+to specify whether the constraining items were "bag exclusively with" or
+"do not bag with" which modified how we created our bitset. A bitset was
+used later to more quickly check constraints as we tried to satisfy them.
+each item also had a unique id which was used as its bit in the bitset.
+Each item's bitset had as many bits as there were items passed to the
+program. Storing the constraints as strings and in the bitset isn't
+really ideal, but a constraining item could be passed before it was
+created itself, so it wouldn't have an id yet. Once all items were created
+and bitsets were initialized, there was no use for the strings.
 (Tyler)
 My main responsibility was depth first search and the GroceryBag class. 
 I made a few mistakes that were relatively easily found in the GroceryBag 
