@@ -114,3 +114,18 @@ Slow: .0907s
 ************************************************************************
 
 General Experience:
+(Ben)
+My main responsibility was local search. Overall my experience was pretty
+positive. I am not as confident in the concepts we are learning in this
+course so I'm pretty happy for the fact that I got my local search working
+effectively. We were able to use version control in an actually effective
+fashion so that worked out pretty well for us. It was really satisfying
+when I was finally able to see the local search complete with a successful
+mapping of items to bags. I went through probably 4 different iterations
+of that method and leaned on Tyler a lot to bounce ideas off of. I was
+also responsible for creating our bagit script and the timing script for
+the project. Although I had to manually get the averages for runtimes
+from the timing script, I think it could be modified to generate those
+itself which would be neat. As of now I have only timed the code on my
+laptop, but the results are pretty consistent.
+(Tyler)
